@@ -1,6 +1,5 @@
 <script lang="ts">
   import Card from './Card.svelte';
-
   import type { Card as CardType } from '../logic/store';
 
   export let cards: CardType[];
@@ -8,7 +7,8 @@
 
 <div class="stack">
   {#each cards as { suit, rank }}
-    <Card rank={rank} suit={suit}></Card>
+    <Card rank={rank} suit={suit}
+      ></Card>
   {/each}
   <Card blank={true}></Card>
 </div>

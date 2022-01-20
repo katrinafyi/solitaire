@@ -4,7 +4,7 @@
 
   $: {
     if ($store.deck.length > 0) {
-      setTimeout(store.dealOne, 100);
+      setTimeout(store.dealOne, 200);
     }
   }
 </script>
@@ -16,6 +16,8 @@
       <Stack cards={stack}></Stack>
     {/each}
   </div>
+
+  <Stack cards={$store.deck}></Stack>
 </div>
 
 <style>
