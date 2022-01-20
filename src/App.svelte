@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let name: string;
 
-	import Game from "./Game.svelte";
+	import Game from "./components/Game.svelte";
 </script>
 
 <main>

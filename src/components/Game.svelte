@@ -1,14 +1,19 @@
 <script lang="ts">
-import Stack from "./Stack.svelte";
+  import Stack from "./Stack.svelte";
+  import { store } from '../logic/store';
 
-  let stacks: number[] = [1,2,3,4,5,6,7,8,9];
+  $: {
+    if ($store.deck.length > 0) {
+      setTimeout(store.dealOne, 100);
+    }
+  }
 </script>
 
 <div id="game">
   Solitaire
   <div id="board">
-    {#each stacks as stack}
-      <Stack></Stack>
+    {#each $store.stacks as stack}
+      <Stack cards={stack}></Stack>
     {/each}
   </div>
 </div>
