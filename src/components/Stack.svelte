@@ -89,6 +89,9 @@
     background-color: green;
     width: 84px;
     height: fit-content;
+
+    touch-action: none;
+    user-select: none;
   }
 
   .stack.bottom {
