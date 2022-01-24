@@ -24,13 +24,13 @@
         // console.log(event.type, event.target)
       },
       move: dragMoveListener,
-      // end: (event) => {
-      //   const el = event.target;
-      //   el.style.zIndex = null;
-      //   el.style.transform = null;
+      end: (event) => {
+        const el = event.target;
+        el.style.zIndex = null;
+        el.style.transform = null;
 
-      //   delete el.dataset.shift;
-      // }
+        delete el.dataset.shift;
+      }
     }
   });
 
@@ -39,11 +39,14 @@
       const dragged = event.relatedTarget;
       const el = event.target;
       console.log('drop', dragged, 'onto', el);
+
+      el.dispatchEvent(new CustomEvent('carddrop', { detail: JSON.parse(dragged.dataset.cards) }));
     }
   })
 </script>
 
 <script lang="ts">
+  import '../logic/drag';
   import type { Card as CardType } from '../logic/store';
   import { onMount } from "svelte";
   import interact from 'interactjs';
@@ -71,6 +74,10 @@
   class:notBottom={!isBot}
   class:bottom={isBot}
   data-cards={data}
+  on:carddrop={(e) => {
+    console.log("oncarddrop", e);
+    cards = [...cards, e.detail]
+  }}
 >
   {#if !isBot}
   <div
@@ -80,7 +87,7 @@
   >
     <img src="cards/crop/card_{key}.png" alt="card">
   </div>
-  <svelte:self {cards} index={index+1}></svelte:self>
+  <svelte:self bind:cards={cards} index={index+1}></svelte:self>
   {/if}
 </div>
 

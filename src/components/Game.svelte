@@ -13,7 +13,9 @@
   Solitaire
   <div id="board">
     {#each $store.stacks as stack}
-      <Stack cards={stack} index={0}></Stack>
+      <div class="stackContainer">
+        <Stack bind:cards={stack} index={0}></Stack>
+      </div>
     {/each}
   </div>
 
@@ -30,5 +32,9 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+  }
+
+  .stackContainer {
+    margin: 10px;
   }
 </style>
