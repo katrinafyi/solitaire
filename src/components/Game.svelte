@@ -4,7 +4,7 @@
 
   $: {
     if ($store.deck.length > 0) {
-      setTimeout(store.dealOne, 200);
+      setTimeout(store.dealOne, 100);
     }
   }
 </script>
