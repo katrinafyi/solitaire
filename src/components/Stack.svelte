@@ -33,6 +33,7 @@
 
 <div
   class="stack"
+  draggable="true"
 >
   {#if index < cards.length}
   <div
@@ -40,7 +41,7 @@
     in:receive="{{key: key}}"
     out:send="{{key: prev}}"
   >
-    <img src="cards/crop/card_{key}.png" alt="card">
+    <img src="cards/crop/card_{key}.png" alt="card" draggable="false">
   </div>
   <svelte:self {cards} index={index+1}></svelte:self>
   {/if}
