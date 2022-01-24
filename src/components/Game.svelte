@@ -13,7 +13,7 @@
   Solitaire
   <div id="board">
     {#each $store.stacks as stack}
-      <Stack cards={stack}></Stack>
+      <Stack cards={stack} index={0}></Stack>
     {/each}
   </div>
 
