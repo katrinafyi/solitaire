@@ -93,6 +93,7 @@ export const createGameStore = () => {
   return {
     subscribe,
     set,
+    update,
     dealOne,
     reset: () => update(() => newGameState())
   }

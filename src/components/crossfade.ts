@@ -68,7 +68,7 @@ export function crossfade({ fallback, ...defaults }: CrossfadeParams & {
         rect: node.getBoundingClientRect()
 			});
 
-      // console.log(!intro ? 'send' : 'receive', items);
+      console.log(!intro ? 'send' : 'receive', items);
 
 			return () => {
 				if (counterparts.has(params.key)) {

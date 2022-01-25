@@ -2,13 +2,13 @@
   import interact from 'interactjs';
 
   import { crossfade } from "./crossfade";
-  import { dragMoveListener } from "../logic/drag";
+  import { dragMoveListener, dragMoveReset } from "../logic/drag";
 
   const [send, receive] = crossfade({
     duration: 500,
   });
 
-  function cardKey(card: CardType | undefined): string {
+  function cardKey(card: Card | undefined): string {
     if (!card) {
       return '(null)';
     }
@@ -21,17 +21,15 @@
     inertia: true,
     autoScroll: true,
     listeners: {
-      start: (event) => {
-        // console.log(event.type, event.target)
-      },
       move: dragMoveListener,
-      end: (event) => {
-        const el = event.target;
-        el.style.zIndex = null;
-        el.style.transform = null;
+      end: (e: Interact.InteractEvent) => {
+        dragMoveReset(e);
 
-        delete el.dataset.shift;
-      }
+        if (e.dropzone) {
+          e.target.dispatchEvent(
+            new CustomEvent('cardsend', { detail: JSON.parse(e.target.dataset.cards!) }));
+        }
+      },
     }
   });
 
@@ -41,23 +39,23 @@
       const el = event.target;
       console.log('drop', dragged, 'onto', el);
 
-      el.dispatchEvent(new CustomEvent('carddrop', { detail: JSON.parse(dragged.dataset.cards) }));
+      const detail = JSON.parse(dragged.dataset.cards);
+      setTimeout(
+        () => el.dispatchEvent(
+          new CustomEvent('cardreceive', { detail })),
+        0);
     }
   })
 </script>
 
 <script lang="ts">
-  import type { Lens } from 'monocle-ts/lib/Lens';
-
   import '../logic/drag';
-  import { Card as CardType, GameState, store } from '../logic/store';
+  import type { Card } from '../logic/store';
 
 
   export let index: number = 0;
-  export let lens: Lens<GameState, CardType[]>;
-
-  let cards: CardType[];
-  $: cards = lens.get($store);
+  export let cards: Card[];
+  export let set: (f: (cards: Card[]) => Card[]) => void = () => null;
 
   $: console.assert(0 <= index && index <= cards.length, index, cards);
 
@@ -79,20 +77,25 @@
   class:notBottom={!isBot}
   class:bottom={isBot}
   data-cards={data}
-  on:carddrop={(e) => {
+  on:cardsend={(e) => {
+    console.log("cardsend", e);
+    set(cs => cs.slice(0, -e.detail.length));
+  }}
+  on:cardreceive={(e) => {
     console.log("oncarddrop", e);
-    cards = [...cards, e.detail]
+    set(cs => [...cs, ...e.detail]);
   }}
 >
   {#if !isBot}
   <div
     class="card"
     in:receive="{{key: key}}"
-    out:send="{{key: prev}}"
+    out:send="{{key: key}}"
   >
+    <!--  -->
     <img src="cards/crop/card_{key}.png" alt="card">
   </div>
-  <svelte:self {lens} index={index+1}></svelte:self>
+  <svelte:self {cards} {set} index={index+1}></svelte:self>
   {/if}
 </div>
 

@@ -1,15 +1,22 @@
 import 'interactjs';
 
 export function dragMoveListener(event: Interact.InteractEvent) {
-  var target = event.target;
-  // keep the dragged position in the data-x/data-y attributes
-  var x = (parseFloat(target.getAttribute('data-x') || '0')) + event.dx;
-  var y = (parseFloat(target.getAttribute('data-y') || '0')) + event.dy;
+  const el = event.target;
+  let [x,y] = JSON.parse(el.dataset.pos ?? '[0,0]');
+  x += event.dx;
+  y += event.dy;
 
   // translate the element
-  target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+  el.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
 
   // update the posiion attributes
-  target.setAttribute('data-x', x.toString());
-  target.setAttribute('data-y', y.toString());
+  el.dataset.pos = JSON.stringify([x,y]);
+}
+
+export function dragMoveReset(event: Interact.InteractEvent) {
+  const el = event.target;
+  delete el.dataset.pos;
+
+  el.style.transform = '';
+
 }

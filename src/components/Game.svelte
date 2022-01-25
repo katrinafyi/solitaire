@@ -4,7 +4,7 @@
   import { forceOptional } from '../logic/lens';
 
   import { Lens as L } from "monocle-ts";
-  import { component, index } from 'monocle-ts/Lens';
+  import { component, index, modify } from 'monocle-ts/Lens';
   import { indexArray } from 'monocle-ts/Index/Array';
 
   $: {
@@ -13,10 +13,11 @@
     }
   }
 
-  const deck_ = L.fromProp<GameState>()('deck');
   const stacks_ = L.fromProp<GameState>()('stacks');
-  const stack_ = (n: number) =>
-    component<Tuple9<Card[]>, Tuple9Index>(n as Tuple9Index)(stacks_);
+  const stack_ = (n: Tuple9Index) =>
+    component<Tuple9<Card[]>, Tuple9Index>(n)(stacks_);
+  const setStack = (n: number) => (f: (cards: Card[]) => Card[]) =>
+    store.update(modify(f)(stack_(n as Tuple9Index)));
 </script>
 
 <div id="game">
@@ -24,12 +25,12 @@
   <div id="board">
     {#each $store.stacks as stack, i}
       <div class="stackContainer">
-        <Stack index={0} lens={stack_(i)}></Stack>
+        <Stack index={0} cards={stack} set={setStack(i)}></Stack>
       </div>
     {/each}
   </div>
 
-  <Stack lens={deck_}></Stack>
+  <Stack cards={$store.deck}></Stack>
 </div>
 
 <style>
