@@ -1,7 +1,8 @@
 <script context="module" lang="ts">
+  import interact from 'interactjs';
+
   import { crossfade } from "./crossfade";
   import { dragMoveListener } from "../logic/drag";
-  import { quintOut } from 'svelte/easing';
 
   const [send, receive] = crossfade({
     duration: 500,
@@ -46,18 +47,22 @@
 </script>
 
 <script lang="ts">
+  import type { Lens } from 'monocle-ts/lib/Lens';
+
   import '../logic/drag';
-  import type { Card as CardType } from '../logic/store';
-  import { onMount } from "svelte";
-  import interact from 'interactjs';
+  import { Card as CardType, GameState, store } from '../logic/store';
 
-  export let cards: CardType[];
+
   export let index: number = 0;
+  export let lens: Lens<GameState, CardType[]>;
 
-  $: console.assert(0 <= index && index <= cards.length);
+  let cards: CardType[];
+  $: cards = lens.get($store);
+
+  $: console.assert(0 <= index && index <= cards.length, index, cards);
 
   let isBot: boolean;
-  $: isBot = index == cards.length;
+  $: isBot = index >= cards.length;
 
   let key: string;
   $: key = cardKey(cards[index]);
@@ -87,7 +92,7 @@
   >
     <img src="cards/crop/card_{key}.png" alt="card">
   </div>
-  <svelte:self bind:cards={cards} index={index+1}></svelte:self>
+  <svelte:self {lens} index={index+1}></svelte:self>
   {/if}
 </div>
 

@@ -1,7 +1,11 @@
+import { unsafeUpdateAt } from "fp-ts/lib/Array";
 import { writable } from "svelte/store";
 
+export type Tuple9<T> = [T, T, T, T, T, T, T, T, T];
+export type Tuple9Index = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+
 export type GameState = {
-  stacks: Card[][],
+  stacks: Tuple9<Card[]>,
   spare: Card | null,
   deck: Card[],
 }
@@ -63,7 +67,7 @@ const newGameState = () => {
     stacks,
     spare: null,
     deck
-  }
+  } as GameState;
 }
 
 export const createGameStore = () => {
@@ -80,10 +84,10 @@ export const createGameStore = () => {
 
     const c = deck[deck.length - 1];
     return {
-      stacks: modifyAt(stacks, i, x => [...x, c]),
+      stacks: unsafeUpdateAt(i, [...stacks[i], c], stacks),
       spare,
       deck: deck.slice(0, -1),
-    };
+    } as GameState;
   });
 
   return {
